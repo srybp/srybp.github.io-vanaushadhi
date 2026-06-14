@@ -1,620 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vanaushadhi — Ancient Indian Pharmaceutical Index</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            parchment: '#F5EDD6',
-            parchmentDark: '#EDE0C0',
-            forest: '#1B3A2D',
-            forestLight: '#2A5240',
-            copper: '#B5763A',
-            copperLight: '#D4945A',
-            inkDark: '#1A1108',
-            inkMid: '#3D2B1F',
-            inkLight: '#7A6050',
-          },
-          fontFamily: {
-            display: ['Cormorant Garamond', 'Georgia', 'serif'],
-            body: ['Inter', 'system-ui', 'sans-serif'],
-          },
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ancient Indian Pharmaceutics Index</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #111827 0%, #065f46 100%);
         }
-      }
-    }
-  </script>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      background-color: #F5EDD6;
-      color: #1A1108;
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-
-    /* Botanical divider — the signature element */
-    .botanical-rule {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: #B5763A;
-      opacity: 0.5;
-    }
-    .botanical-rule::before,
-    .botanical-rule::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: currentColor;
-    }
-    .botanical-rule span {
-      font-size: 1rem;
-      line-height: 1;
-    }
-
-    /* Search input */
-    .search-input {
-      background: transparent;
-      border: 1.5px solid #B5763A;
-      border-radius: 0;
-      color: #1A1108;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
-    }
-    .search-input::placeholder { color: #7A6050; }
-    .search-input:focus {
-      border-color: #1B3A2D;
-      box-shadow: 0 0 0 3px rgba(27, 58, 45, 0.08);
-    }
-
-    /* Plant card */
-    .plant-card {
-      border-top: 1px solid rgba(181, 118, 58, 0.3);
-      transition: background 0.15s;
-    }
-    .plant-card:last-child { border-bottom: 1px solid rgba(181, 118, 58, 0.3); }
-    .plant-card:hover { background: rgba(181, 118, 58, 0.04); }
-
-    .card-trigger {
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      background: none;
-      border: none;
-      padding: 1.25rem 0;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .card-trigger:focus-visible {
-      outline: 2px solid #1B3A2D;
-      outline-offset: 2px;
-    }
-
-    .chevron {
-      flex-shrink: 0;
-      width: 1rem;
-      height: 1rem;
-      color: #B5763A;
-      transition: transform 0.3s ease;
-    }
-    .plant-card.open .chevron { transform: rotate(180deg); }
-
-    /* Accordion body */
-    .card-body {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.35s ease;
-    }
-    .plant-card.open .card-body { grid-template-rows: 1fr; }
-    .card-body-inner { overflow: hidden; }
-
-    /* Tag pills */
-    .compound-tag {
-      display: inline-block;
-      background: rgba(27, 58, 45, 0.08);
-      border: 1px solid rgba(27, 58, 45, 0.18);
-      color: #1B3A2D;
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 0.25rem 0.6rem;
-      border-radius: 2px;
-    }
-
-    /* Filter chips */
-    .filter-chip {
-      border: 1px solid rgba(181, 118, 58, 0.4);
-      color: #7A6050;
-      font-size: 0.7rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.75rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      background: transparent;
-      border-radius: 0;
-    }
-    .filter-chip:hover, .filter-chip.active {
-      background: #1B3A2D;
-      border-color: #1B3A2D;
-      color: #F5EDD6;
-    }
-    .filter-chip:focus-visible {
-      outline: 2px solid #B5763A;
-      outline-offset: 2px;
-    }
-
-    /* Empty state */
-    #empty-state { display: none; }
-
-    /* Scroll to top */
-    #scroll-top {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      background: #1B3A2D;
-      color: #F5EDD6;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      border-radius: 0;
-    }
-    #scroll-top.visible { opacity: 1; pointer-events: auto; }
-    #scroll-top:hover { background: #2A5240; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .card-body, .chevron { transition: none; }
-    }
-  </style>
+    </style>
 </head>
+<body class="bg-gray-900 text-gray-100 font-sans min-h-screen">
 
-<body class="min-h-screen">
-
-  <!-- Header -->
-  <header class="border-b border-copper/20 bg-parchment/80 backdrop-blur-sm sticky top-0 z-30">
-    <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" class="text-forest opacity-80">
-          <path d="M11 2C11 2 5 6 5 12C5 15.31 7.69 18 11 18C14.31 18 17 15.31 17 12C17 6 11 2 11 2Z" stroke="currentColor" stroke-width="1.2" fill="none"/>
-          <path d="M11 18V21M8 21H14" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/>
-          <path d="M11 10C11 10 8 8 6 10" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
-          <path d="M11 13C11 13 14 11 16 13" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
-        </svg>
-        <span class="font-display text-lg font-400 text-inkDark tracking-wide">Vanaushadhi</span>
-      </div>
-      <span class="font-body text-xs text-inkLight tracking-widest uppercase">Botanical Index</span>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <section class="max-w-4xl mx-auto px-6 pt-14 pb-10">
-    <p class="font-body text-xs tracking-widest uppercase text-copper mb-4">Ayurvedic Pharmacopoeia</p>
-    <h1 class="font-display text-5xl md:text-6xl font-300 text-inkDark leading-tight mb-5">
-      Ancient Plants,<br /><em class="text-forest font-300">Modern Science</em>
-    </h1>
-    <p class="font-body text-sm text-inkLight leading-relaxed max-w-lg mb-2">
-      A reference index of medicinal plants documented in classical Ayurvedic texts — cross-referenced with contemporary phytochemistry and clinical research.
-    </p>
-  </section>
-
-  <!-- Search & Filter -->
-  <section class="max-w-4xl mx-auto px-6 pb-8">
-    <div class="mb-5">
-      <label for="search" class="font-body text-xs tracking-widest uppercase text-inkLight mb-2 block">Search plants</label>
-      <div class="relative">
-        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-copper/60 pointer-events-none" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35" stroke-linecap="square"/>
-        </svg>
-        <input
-          id="search"
-          type="search"
-          placeholder="e.g. Ashwagandha, Turmeric, Neem…"
-          class="search-input w-full pl-10 pr-4 py-3 font-body text-sm"
-          autocomplete="off"
-          spellcheck="false"
-        />
-      </div>
-    </div>
-
-    <div class="flex flex-wrap gap-2 items-center">
-      <span class="font-body text-xs text-inkLight uppercase tracking-widest mr-1">Filter:</span>
-      <button class="filter-chip active" data-filter="all">All</button>
-      <button class="filter-chip" data-filter="adaptogen">Adaptogen</button>
-      <button class="filter-chip" data-filter="anti-inflammatory">Anti-inflammatory</button>
-      <button class="filter-chip" data-filter="antimicrobial">Antimicrobial</button>
-      <button class="filter-chip" data-filter="nervine">Nervine</button>
-      <button class="filter-chip" data-filter="digestive">Digestive</button>
-    </div>
-  </section>
-
-  <!-- Results count -->
-  <div class="max-w-4xl mx-auto px-6 pb-3 flex items-center justify-between">
-    <span id="result-count" class="font-body text-xs text-inkLight"></span>
-  </div>
-
-  <!-- Plant List -->
-  <main class="max-w-4xl mx-auto px-6 pb-24" id="plant-list">
-
-    <div id="empty-state" class="py-20 text-center">
-      <div class="botanical-rule mb-8"><span>✦</span></div>
-      <p class="font-display text-2xl italic text-inkLight mb-2">No plants found</p>
-      <p class="font-body text-sm text-inkLight">Try a different name or clear the search.</p>
-    </div>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="border-t border-copper/20 bg-parchmentDark/40">
-    <div class="max-w-4xl mx-auto px-6 py-10">
-      <div class="botanical-rule mb-6"><span>✦</span></div>
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <p class="font-display text-lg font-300 text-inkDark mb-1">Vanaushadhi</p>
-          <p class="font-body text-xs text-inkLight">Sources: Charaka Samhita · Sushruta Samhita · Ashtanga Hridayam · PubMed</p>
-        </div>
-        <p class="font-body text-xs text-inkLight max-w-xs text-right">
-          For educational purposes only. This index is not a substitute for professional medical advice.
+    <header class="gradient-bg text-center py-12 px-4 shadow-xl border-b border-emerald-800">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-emerald-400 tracking-wide mb-3">
+            Bharatiya Bheshaja Index
+        </h1>
+        <p class="text-gray-300 text-lg max-w-2xl mx-auto font-medium">
+            An intersectional database linking ancient Indian ethnobotanical pharmacology with modern phytochemical mechanisms.
         </p>
-      </div>
-    </div>
-  </footer>
+    </header>
 
-  <!-- Scroll to top -->
-  <button id="scroll-top" title="Back to top" aria-label="Scroll to top">
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-      <path d="M7 12V2M2 7l5-5 5 5" stroke-linecap="square"/>
-    </svg>
-  </button>
-
-  <script>
-    const PLANTS = [
-      {
-        id: 1,
-        name: "Ashwagandha",
-        sanskrit: "अश्वगन्धा",
-        ayurvedic: "Ashwagandha",
-        botanical: "Withania somnifera",
-        family: "Solanaceae",
-        tags: ["adaptogen", "nervine"],
-        parts: "Root, leaf",
-        classicalUse: "Rasayana (rejuvenative tonic); prescribed in Charaka Samhita for debility, emaciation, and impaired immunity.",
-        compounds: ["Withanolides", "Withaferin A", "Sitoindosides", "Alkaloids (somnine, somniferine)", "Iron", "Choline"],
-        mechanism: [
-          { label: "HPA Axis Modulation", desc: "Withanolides reduce cortisol secretion by modulating the hypothalamic–pituitary–adrenal axis, attenuating the chronic stress response." },
-          { label: "GABAergic Activity", desc: "Triethylene glycol components promote sleep onset via GABA receptor potentiation, supporting its classical use as a nervine sedative." },
-          { label: "NF-κB Inhibition", desc: "Withaferin A suppresses the NF-κB inflammatory pathway, reducing pro-inflammatory cytokines (TNF-α, IL-6)." },
-          { label: "Thyroid Stimulation", desc: "Stimulates T3/T4 synthesis, supporting thyroid function in subclinical hypothyroidism." },
-        ],
-      },
-      {
-        id: 2,
-        name: "Turmeric",
-        sanskrit: "हरिद्रा",
-        ayurvedic: "Haridra",
-        botanical: "Curcuma longa",
-        family: "Zingiberaceae",
-        tags: ["anti-inflammatory", "digestive"],
-        parts: "Rhizome",
-        classicalUse: "Widely used in Sushruta Samhita for wound healing, skin disorders, and digestive complaints. A primary ingredient in formulas for jaundice and liver disease.",
-        compounds: ["Curcumin", "Demethoxycurcumin", "Bisdemethoxycurcumin", "Ar-turmerone", "Turmerone", "Atlantone"],
-        mechanism: [
-          { label: "Pleiotropic Anti-Inflammation", desc: "Curcumin simultaneously inhibits COX-2, LOX, iNOS, and NF-κB — multiple inflammatory pathways — without NSAID-associated gastric side-effects." },
-          { label: "Antioxidant Cascade", desc: "Activates Nrf2 transcription factor, upregulating endogenous antioxidant enzymes (SOD, catalase, glutathione peroxidase)." },
-          { label: "VEGF & Angiogenesis Suppression", desc: "Downregulates VEGF expression, inhibiting tumour vascularisation — mechanism behind ongoing oncology trials." },
-          { label: "Gut Microbiome Modulation", desc: "Selectively promotes Bifidobacterium and Lactobacillus, supporting bile secretion and hepatoprotection." },
-        ],
-      },
-      {
-        id: 3,
-        name: "Brahmi",
-        sanskrit: "ब्राह्मी",
-        ayurvedic: "Brahmi",
-        botanical: "Bacopa monnieri",
-        family: "Plantaginaceae",
-        tags: ["nervine", "adaptogen"],
-        parts: "Whole herb",
-        classicalUse: "Described in Atharva Veda as a medhya rasayana — a tonic for intellect and memory. Used in Ashtanga Hridayam for epilepsy and mental fatigue.",
-        compounds: ["Bacosides A & B", "Bacopasaponins", "Alkaloids (brahmine, herpestine)", "Betulinic acid", "Luteolin"],
-        mechanism: [
-          { label: "Synaptic Remodelling", desc: "Bacosides enhance synaptic plasticity by promoting dendritic arborisation and kinase activity in the hippocampus, improving memory consolidation." },
-          { label: "Acetylcholinesterase Inhibition", desc: "Inhibits AChE, increasing acetylcholine availability at synapses — the same target as pharmaceutical Alzheimer's drugs (donepezil)." },
-          { label: "Serotonin Modulation", desc: "Upregulates 5-HT3 receptors, supporting anxiolytic effects and mood stabilisation." },
-          { label: "Antioxidant Neuroprotection", desc: "Superoxide dismutase (SOD) induction and free-radical scavenging reduce oxidative neuronal damage." },
-        ],
-      },
-      {
-        id: 4,
-        name: "Neem",
-        sanskrit: "निम्ब",
-        ayurvedic: "Nimba",
-        botanical: "Azadirachta indica",
-        family: "Meliaceae",
-        tags: ["antimicrobial", "anti-inflammatory"],
-        parts: "Leaf, bark, seed oil, flower",
-        classicalUse: "Charaka classified Neem as the primary herb for skin diseases, fever, and worm infestations. Its Sanskrit name Nimba derives from 'to give good health'.",
-        compounds: ["Nimbidin", "Azadirachtin", "Nimbolide", "Gedunin", "Nimbidol", "Quercetin", "β-sitosterol"],
-        mechanism: [
-          { label: "Broad-Spectrum Antimicrobial", desc: "Nimbidin disrupts bacterial cell membranes and inhibits adhesion of pathogens (including MRSA strains) to host tissue." },
-          { label: "Parasite Disruption", desc: "Azadirachtin blocks ecdysone receptors in insects and helminths, disrupting moulting and larval development — basis of its antifungal and antiparasitic activity." },
-          { label: "Immunomodulation", desc: "Nimbolide activates macrophages and NK cells while suppressing IL-1β-mediated inflammatory cascades." },
-          { label: "Antiproliferative Action", desc: "Gedunin induces apoptosis in cancer cell lines via mitochondrial pathway (cytochrome c release, caspase-3 activation)." },
-        ],
-      },
-      {
-        id: 5,
-        name: "Triphala",
-        sanskrit: "त्रिफला",
-        ayurvedic: "Triphala",
-        botanical: "Terminalia chebula / T. bellirica / Phyllanthus emblica",
-        family: "Combretaceae / Phyllanthaceae",
-        tags: ["digestive", "anti-inflammatory"],
-        parts: "Dried fruit (three varieties)",
-        classicalUse: "The most prescribed compound formulation in Ayurveda — a tridoshic rasayana mentioned across both Charaka and Sushruta Samhitas for bowel regulation, eye health, and longevity.",
-        compounds: ["Chebulinic acid", "Gallic acid", "Ellagic acid", "Emblicanin A & B", "Vitamin C (Amla)", "Tannins", "Chebulagic acid"],
-        mechanism: [
-          { label: "Prebiotic Fermentation", desc: "Tannins undergo gut-microbial fermentation into urolithins, which activate mitophagy and reduce intestinal permeability (leaky gut)." },
-          { label: "Bowel Motility", desc: "Sennoside-like compounds in Terminalia chebula stimulate peristaltic contractions via enteric nervous system activation." },
-          { label: "Collagen Synthesis", desc: "Emblicanin A/B (from Amla) are among the most bioavailable natural Vitamin C sources, critical for collagen cross-linking and connective tissue integrity." },
-          { label: "Retinal Protection", desc: "Chebulagic acid inhibits VEGF-A–induced neovascularisation in retinal tissue, supporting classical use in eye diseases." },
-        ],
-      },
-      {
-        id: 6,
-        name: "Shatavari",
-        sanskrit: "शतावरी",
-        ayurvedic: "Shatavari",
-        botanical: "Asparagus racemosus",
-        family: "Asparagaceae",
-        tags: ["adaptogen", "nervine"],
-        parts: "Root",
-        classicalUse: "Described in Charaka Samhita as a female reproductive tonic and galactagogue. Literally 'she who possesses a hundred husbands' — a reference to its vitalising properties.",
-        compounds: ["Steroidal saponins (Shatavarins I–IV)", "Isoflavones", "Quercetin", "Rutin", "Sarsapogenin", "Mucilage polysaccharides"],
-        mechanism: [
-          { label: "Phytoestrogenic Activity", desc: "Steroidal saponins bind oestrogen receptors (ERα/ERβ) with selective affinity, supporting hormonal balance without the proliferative risks of synthetic oestrogens." },
-          { label: "Prolactin Potentiation", desc: "Promotes galactopoiesis by increasing prolactin levels — validated in double-blind trials on lactating mothers." },
-          { label: "Gastric Cytoprotection", desc: "Mucilage polysaccharides form a protective film on gastric mucosa, inhibiting H. pylori adhesion and reducing peptic ulceration." },
-          { label: "Immunoadaptation", desc: "Polysaccharide fractions activate macrophage phagocytosis and increase IgG production under stress conditions." },
-        ],
-      },
-      {
-        id: 7,
-        name: "Guduchi",
-        sanskrit: "गुडूची",
-        ayurvedic: "Guduchi / Amrita",
-        botanical: "Tinospora cordifolia",
-        family: "Menispermaceae",
-        tags: ["adaptogen", "anti-inflammatory", "antimicrobial"],
-        parts: "Stem, root, leaf",
-        classicalUse: "Called Amrita ('divine nectar') in ancient texts. The Charaka Samhita lists it among the top herbs for Jwara (fever) and as a potent Rasayana for immunity.",
-        compounds: ["Tinosporin", "Berberine", "Palmatine", "Tinocordioside", "Cordifolide A", "Arabinogalactan polysaccharides"],
-        mechanism: [
-          { label: "Macrophage Activation", desc: "Arabinogalactan polysaccharides directly stimulate macrophage phagocytic activity and increase nitric oxide production against pathogens." },
-          { label: "Platelet & WBC Augmentation", desc: "Demonstrated in clinical studies to elevate platelet counts in dengue fever — one of its best-documented modern applications." },
-          { label: "Alkaloid Antipyresis", desc: "Berberine inhibits PGE2 synthesis at the hypothalamic thermostat, reducing fever without the rebound effect seen with NSAIDs." },
-          { label: "Hepatoprotection", desc: "Tinocordioside prevents lipid peroxidation in hepatocytes and upregulates liver detoxification enzymes (GST, GSH)." },
-        ],
-      },
-      {
-        id: 8,
-        name: "Shankhpushpi",
-        sanskrit: "शंखपुष्पी",
-        ayurvedic: "Shankhpushpi",
-        botanical: "Convolvulus pluricaulis",
-        family: "Convolvulaceae",
-        tags: ["nervine"],
-        parts: "Whole plant",
-        classicalUse: "A premier medhya (intellect-promoting) herb in Ashtanga Hridayam, prescribed for anxiety, insomnia, and mental exhaustion since the Vedic period.",
-        compounds: ["Shankhpushpine", "Convolvine", "Phyllabine", "Coumarins", "Flavonoids (kaempferol, quercetin)", "Glycosides"],
-        mechanism: [
-          { label: "Anxiolytic via GABA-A", desc: "Flavonoid fractions potentiate GABA-A receptor activity in a similar manner to benzodiazepines, producing sedative and anxiolytic effects without dependency." },
-          { label: "Thyroid Hormone Regulation", desc: "Inhibits the enzyme thyroid peroxidase, moderating T4 overproduction — useful in mild hyperthyroidism." },
-          { label: "Cholinergic Enhancement", desc: "Increases muscarinic receptor density in the hippocampus, improving spatial learning and short-term memory recall." },
-          { label: "Stress Hormone Attenuation", desc: "Reduces adrenaline and dopamine turnover under acute stress, dampening the sympathetic 'fight-or-flight' response." },
-        ],
-      },
-      {
-        id: 9,
-        name: "Haritaki",
-        sanskrit: "हरीतकी",
-        ayurvedic: "Haritaki",
-        botanical: "Terminalia chebula",
-        family: "Combretaceae",
-        tags: ["digestive", "anti-inflammatory"],
-        parts: "Dried fruit",
-        classicalUse: "Called the 'King of Medicines' in Tibetan medicine and revered in Charaka Samhita as a panacea. One of the three fruits of Triphala, used alone for rejuvenation.",
-        compounds: ["Chebulic acid", "Chebulinic acid", "Chebulagic acid", "Gallic acid", "Ellagic acid", "Corilagin", "Luteic acid"],
-        mechanism: [
-          { label: "Broad Antimicrobial Spectrum", desc: "Chebulinic acid disrupts biofilm formation and cell membranes of E. coli, Staphylococcus aureus, and Candida albicans at low MIC concentrations." },
-          { label: "Aldose Reductase Inhibition", desc: "Gallic acid inhibits aldose reductase, blocking the sorbitol pathway implicated in diabetic neuropathy and retinopathy." },
-          { label: "PPAR-γ Agonism", desc: "Ellagic acid acts as a partial PPAR-γ agonist, improving insulin sensitivity — a potential mechanism for its classical use in metabolic disorders." },
-          { label: "Telomerase Activation", desc: "Corilagin has been shown in cellular studies to activate telomerase, potentially explaining the anti-ageing (rasayana) claims in classical texts." },
-        ],
-      },
-      {
-        id: 10,
-        name: "Manjistha",
-        sanskrit: "मञ्जिष्ठा",
-        ayurvedic: "Manjistha",
-        botanical: "Rubia cordifolia",
-        family: "Rubiaceae",
-        tags: ["anti-inflammatory", "antimicrobial"],
-        parts: "Root",
-        classicalUse: "A primary blood-purifying (raktashodhaka) herb in both Charaka and Sushruta Samhitas, used for skin diseases, lymphatic congestion, and menstrual disorders.",
-        compounds: ["Alizarin", "Purpurin", "Mollugin", "Rubicordifolin", "Xanthopurpurin", "Furomollugin", "Lucidin"],
-        mechanism: [
-          { label: "Lymphatic & Venous Tone", desc: "Alizarin and purpurin improve capillary integrity and venous tone, supporting lymphatic drainage — the physiological basis for 'blood purification'." },
-          { label: "Melanogenesis Inhibition", desc: "Mollugin inhibits tyrosinase, the rate-limiting enzyme in melanin biosynthesis, validating its historical use in hyperpigmentation and skin brightening." },
-          { label: "Calcium Oxalate Dissolution", desc: "Reduces calcium oxalate crystal aggregation in the renal tubules, acting as a lithotriptic agent for kidney stones." },
-          { label: "p38 MAPK Pathway", desc: "Rubicordifolin suppresses p38 MAPK and ERK1/2 phosphorylation, reducing cytokine-driven inflammation in dermal tissue." },
-        ],
-      },
-    ];
-
-    // ── Render ──────────────────────────────────────────────────────────────
-
-    function renderPlants(list) {
-      const container = document.getElementById('plant-list');
-      const emptyState = document.getElementById('empty-state');
-      const countEl = document.getElementById('result-count');
-
-      // Remove all cards (not empty state)
-      container.querySelectorAll('.plant-card').forEach(el => el.remove());
-
-      countEl.textContent = `${list.length} plant${list.length !== 1 ? 's' : ''} found`;
-
-      if (list.length === 0) {
-        emptyState.style.display = 'block';
-        return;
-      }
-      emptyState.style.display = 'none';
-
-      list.forEach(plant => {
-        const card = document.createElement('div');
-        card.className = 'plant-card';
-        card.dataset.id = plant.id;
-
-        card.innerHTML = `
-          <button class="card-trigger" aria-expanded="false" aria-controls="body-${plant.id}">
-            <div class="flex-1 min-w-0">
-              <div class="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-                <span class="font-display text-xl font-400 text-inkDark">${plant.name}</span>
-                <span class="font-display text-base italic text-inkLight font-300">${plant.botanical}</span>
-              </div>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="font-body text-xs text-copper">${plant.sanskrit}</span>
-                <span class="text-copper/30 text-xs">·</span>
-                <span class="font-body text-xs text-inkLight">${plant.family}</span>
-              </div>
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        
+        <div class="mb-10 max-w-md mx-auto">
+            <div class="relative">
+                <input type="text" id="searchInput" onkeyup="searchIndex()" placeholder="Search by herb name, phytochemical, or action..." 
+                    class="w-full bg-gray-800 text-white border border-gray-700 rounded-lg px-4 py-3 pl-10 focus:outline-none focus:border-emerald-500 transition shadow-inner">
+                <span class="absolute left-3 top-3.5 text-gray-500">🔍</span>
             </div>
-            <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M3 6l5 5 5-5" stroke-linecap="square"/>
-            </svg>
-          </button>
+        </div>
 
-          <div class="card-body" id="body-${plant.id}" role="region">
-            <div class="card-body-inner">
-              <div class="pb-6 grid md:grid-cols-2 gap-x-10 gap-y-5">
-
-                <!-- Classical use -->
-                <div class="md:col-span-2">
-                  <div class="botanical-rule mb-3"><span>✦</span></div>
-                  <p class="font-body text-xs uppercase tracking-widest text-copper mb-1.5">Classical Use</p>
-                  <p class="font-body text-sm text-inkMid leading-relaxed">${plant.classicalUse}</p>
-                </div>
-
-                <!-- Compounds -->
+        <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="herb-card bg-gray-800 rounded-xl border border-gray-700 p-6 hover:border-emerald-500 transition duration-300 shadow-lg flex flex-col justify-between">
                 <div>
-                  <p class="font-body text-xs uppercase tracking-widest text-copper mb-2">Active Compounds</p>
-                  <div class="flex flex-wrap gap-1.5">
-                    ${plant.compounds.map(c => `<span class="compound-tag">${c}</span>`).join('')}
-                  </div>
-                  <p class="font-body text-xs text-inkLight mt-3">
-                    <span class="text-forest/60 font-medium">Parts used:</span> ${plant.parts}
-                  </p>
+                    <div class="flex justify-between items-start mb-3">
+                        <h2 class="text-2xl font-bold text-emerald-400 herb-name">Ashwagandha</h2>
+                        <span class="bg-emerald-900/50 text-emerald-300 text-xs px-2.5 py-1 rounded-full font-semibold border border-emerald-700">Adaptogen</span>
+                    </div>
+                    <p class="text-xs italic text-gray-400 mb-4">Withania somnifera</p>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <span class="block font-semibold text-gray-300">Key Phytochemicals:</span>
+                            <span class="text-gray-400 phytochemicals">Withanolides (Withaferin A, Withanolide D)</span>
+                        </div>
+                        <div>
+                            <span class="block font-semibold text-gray-300">Modern Mechanism of Action:</span>
+                            <p class="text-gray-400 mechanism leading-relaxed">Modulates HPA (Hypothalamic-Pituitary-Adrenal) axis activity; downregulates serum cortisol levels to reduce systemic biochemical stress.</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Mechanisms -->
-                <div>
-                  <p class="font-body text-xs uppercase tracking-widest text-copper mb-2">Mechanisms of Action</p>
-                  <div class="space-y-3">
-                    ${plant.mechanism.map(m => `
-                      <div>
-                        <p class="font-body text-xs font-500 text-forest mb-0.5">${m.label}</p>
-                        <p class="font-body text-xs text-inkLight leading-relaxed">${m.desc}</p>
-                      </div>
-                    `).join('')}
-                  </div>
+                <div class="mt-6 pt-4 border-t border-gray-700/50 text-xs text-gray-500">
+                    Source Ref: Charaka Samhita, Chikitsa Sthana
                 </div>
-
-              </div>
             </div>
-          </div>
-        `;
 
-        // Accordion toggle
-        const trigger = card.querySelector('.card-trigger');
-        trigger.addEventListener('click', () => {
-          const isOpen = card.classList.contains('open');
-          // Close all others
-          document.querySelectorAll('.plant-card.open').forEach(c => {
-            c.classList.remove('open');
-            c.querySelector('.card-trigger').setAttribute('aria-expanded', 'false');
-          });
-          if (!isOpen) {
-            card.classList.add('open');
-            trigger.setAttribute('aria-expanded', 'true');
-          }
-        });
+            <div class="herb-card bg-gray-800 rounded-xl border border-gray-700 p-6 hover:border-emerald-500 transition duration-300 shadow-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-3">
+                        <h2 class="text-2xl font-bold text-emerald-400 herb-name">Haridra (Turmeric)</h2>
+                        <span class="bg-blue-900/50 text-blue-300 text-xs px-2.5 py-1 rounded-full font-semibold border border-blue-700">Anti-Inflammatory</span>
+                    </div>
+                    <p class="text-xs italic text-gray-400 mb-4">Curcuma longa</p>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <span class="block font-semibold text-gray-300">Key Phytochemicals:</span>
+                            <span class="text-gray-400 phytochemicals">Curcuminoids (Curcumin, Demethoxycurcumin)</span>
+                        </div>
+                        <div>
+                            <span class="block font-semibold text-gray-300">Modern Mechanism of Action:</span>
+                            <p class="text-gray-400 mechanism leading-relaxed">Inhibits NF-kB transcriptive pathway, effectively downregulating inflammatory cytokines (TNF-alpha and IL-6) and COX-2 enzymes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-700/50 text-xs text-gray-500">
+                    Source Ref: Sushruta Samhita, Sutra Sthana
+                </div>
+            </div>
 
-        container.appendChild(card);
-      });
-    }
+            <div class="herb-card bg-gray-800 rounded-xl border border-gray-700 p-6 hover:border-emerald-500 transition duration-300 shadow-lg flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-start mb-3">
+                        <h2 class="text-2xl font-bold text-emerald-400 herb-name">Tulsi</h2>
+                        <span class="bg-purple-900/50 text-purple-300 text-xs px-2.5 py-1 rounded-full font-semibold border border-purple-700">Immunomodulator</span>
+                    </div>
+                    <p class="text-xs italic text-gray-400 mb-4">Ocimum sanctum</p>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div>
+                            <span class="block font-semibold text-gray-300">Key Phytochemicals:</span>
+                            <span class="text-gray-400 phytochemicals">Eugenol, Carvacrol, Ursolic Acid</span>
+                        </div>
+                        <div>
+                            <span class="block font-semibold text-gray-300">Modern Mechanism of Action:</span>
+                            <p class="text-gray-400 mechanism leading-relaxed">Enhances NK (Natural Killer) cell and T-helper cell activity; high phenolic composition scavengerizes free radicals protecting cellular structures.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-6 pt-4 border-t border-gray-700/50 text-xs text-gray-500">
+                    Source Ref: Dhavantari Nighantu
+                </div>
+            </div>
 
-    // ── Filter & Search ──────────────────────────────────────────────────────
+        </div>
+    </main>
 
-    let activeFilter = 'all';
-    let searchQuery = '';
+    <script>
+        function searchIndex() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.getElementsByClassName('herb-card');
 
-    function applyFilters() {
-      let list = PLANTS;
-      if (activeFilter !== 'all') {
-        list = list.filter(p => p.tags.includes(activeFilter));
-      }
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase();
-        list = list.filter(p =>
-          p.name.toLowerCase().includes(q) ||
-          p.botanical.toLowerCase().includes(q) ||
-          p.ayurvedic.toLowerCase().includes(q) ||
-          p.sanskrit.includes(q) ||
-          p.compounds.some(c => c.toLowerCase().includes(q)) ||
-          p.tags.some(t => t.includes(q))
-        );
-      }
-      renderPlants(list);
-    }
+            for (let i = 0; i < cards.length; i++) {
+                let name = cards[i].querySelector('.herb-name').innerText.toLowerCase();
+                let phyt = cards[i].querySelector('.phytochemicals').innerText.toLowerCase();
+                let mech = cards[i].querySelector('.mechanism').innerText.toLowerCase();
 
-    document.getElementById('search').addEventListener('input', e => {
-      searchQuery = e.target.value.trim();
-      applyFilters();
-    });
-
-    document.querySelectorAll('.filter-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeFilter = btn.dataset.filter;
-        applyFilters();
-      });
-    });
-
-    // ── Scroll to top ────────────────────────────────────────────────────────
-    const scrollBtn = document.getElementById('scroll-top');
-    window.addEventListener('scroll', () => {
-      scrollBtn.classList.toggle('visible', window.scrollY > 300);
-    });
-    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-    // ── Init ─────────────────────────────────────────────────────────────────
-    renderPlants(PLANTS);
-  </script>
+                if (name.includes(input) || phyt.includes(input) || mech.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+    </script>
 </body>
 </html>
