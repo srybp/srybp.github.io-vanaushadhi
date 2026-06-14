@@ -75,11 +75,15 @@
         let allPlants = [];
         let currentActiveCategory = 'ALL';
 
-        // Fetch plant database from JSON file natively
+        // Fetch plant database from JSON file natively and sort alphabetically
         async function loadDatabase() {
             try {
                 const response = await fetch('plants.json');
                 allPlants = await response.json();
+                
+                // Sort plants alphabetically by name
+                allPlants.sort((a, b) => a.name.localeCompare(b.name));
+                
                 renderCards(allPlants);
             } catch (error) {
                 document.getElementById('resultsCount').innerText = "Error parsing database file.";
