@@ -3,428 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DravyaPharma | Computation Ethnobotany</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>Vanaushadhi | Botanical Index</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --dark-bg: #030612;
-            --pharma-navy: #0e1a38;
-            --science-blue: #2a6fdf;
-            --pharma-teal: #19947f;
-            --text-main: #f0f4f8;
-            --text-data: #b9cadc;
-            --data-box-bg: #081024;
-            --border-muted: #1e3568;
-            --glow-blue: rgba(42, 111, 223, 0.25);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
-            background-color: var(--dark-bg);
-            color: var(--text-main);
-            font-family: 'Roboto', sans-serif;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f5f7; /* Apple's signature light grey background */
+            color: #1d1d1f; /* Apple's ink black text */
         }
-
-        header {
-            text-align: center;
-            padding: 100px 30px 50px;
-            background: radial-gradient(circle at center, #0c193a 0%, var(--dark-bg) 70%);
-        }
-
-        header h1 {
-            font-family: 'Oswald', sans-serif;
-            font-size: 3.8rem;
-            color: var(--text-main);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-        }
-
-        header h1 span {
-            color: var(--pharma-teal);
-        }
-
-        header p {
-            color: var(--text-data);
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto;
-            font-weight: 300;
-        }
-
-        .search-container {
-            max-width: 600px;
-            margin: 0 auto 70px;
-            padding: 0 20px;
-        }
-
-        .search-bar {
-            width: 100%;
-            padding: 18px 30px;
-            background: var(--pharma-navy);
-            border: 2px solid var(--border-muted);
-            border-radius: 6px;
-            color: var(--text-main);
-            font-size: 1.1rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-bar:focus {
-            border-color: var(--science-blue);
-            box-shadow: 0 0 25px var(--glow-blue);
-        }
-
-        .grid-container {
-            max-width: 1300px;
-            margin: 0 auto;
+        /* Custom smooth transition for the expanding accordion grid rows */
+        .accordion-content {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 35px;
-            padding: 0 25px 100px;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows 0.3s cubic-bezier(0.25, 1, 0.5, 1);
         }
-
-        .pharma-card {
-            background: var(--pharma-navy);
-            border: 1px solid var(--border-muted);
-            border-radius: 8px;
-            padding: 35px;
-            transition: all 0.4s ease-out;
-            cursor: pointer;
+        .card.expanded .accordion-content {
+            grid-template-rows: 1fr;
+        }
+        .accordion-inner {
             overflow: hidden;
-            position: relative;
         }
-
-        .pharma-card::after {
-            content: '+';
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.5rem;
-            color: var(--border-muted);
-            font-family: 'Oswald', sans-serif;
-            transition: color 0.3s ease;
+        /* Rotatable Chevron icon */
+        .chevron {
+            transition: transform 0.3s ease;
         }
-
-        .pharma-card:hover {
-            transform: translateX(5px);
-            border-color: var(--science-blue);
-            box-shadow: -8px 8px 0px rgba(42, 111, 223, 0.1);
-        }
-
-        .pharma-card:hover::after {
-            color: var(--science-blue);
-        }
-
-        .header-block {
-            margin-bottom: 25px;
-        }
-
-        .main-title-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .sanskrit-title {
-            font-family: 'Oswald', sans-serif;
-            font-size: 2.1rem;
-            font-weight: 700;
-            color: var(--text-main);
-            text-transform: uppercase;
-        }
-
-        .botanical-name {
-            font-size: 1rem;
-            font-style: italic;
-            color: var(--pharma-teal);
-            margin-top: -5px;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .data-block {
-            margin-bottom: 20px;
-            background: var(--data-box-bg);
-            padding: 15px 20px;
-            border-radius: 4px;
-            border-left: 3px solid var(--border-muted);
-            transition: border-color 0.3s ease;
-        }
-
-        .pharma-card:hover .data-block {
-            border-left-color: var(--science-blue);
-        }
-
-        .data-header {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--science-blue);
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .data-content {
-            font-size: 1rem;
-            color: var(--text-data);
-        }
-
-        .ref-footer {
-            margin-top: auto;
-            font-size: 0.85rem;
-            color: var(--border-muted);
-            font-family: 'Oswald', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-top: 15px;
-        }
-
-        @media (max-width: 768px) {
-            header h1 { font-size: 2.8rem; }
-            .grid-container { grid-template-columns: 1fr; }
+        .card.expanded .chevron {
+            transform: rotate(180deg);
         }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-emerald-100 selection:text-emerald-900">
 
-    <header>
-        <h1>Dravya<span>Pharma</span></h1>
-        <p>A computational database mapping ancient Ethnobotanical Sanskrit formulations to modern molecular pharmacology and structural biochemistry.</p>
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 border-b border-gray-200/80 transition-all duration-300">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-xs font-bold tracking-widest text-emerald-600 uppercase">Vanaushadhi</span>
+                <span class="text-xs font-semibold text-gray-400">|</span>
+                <span class="text-xs font-semibold tracking-wider text-gray-500 uppercase">Botanical Index</span>
+            </div>
+            <div class="text-[11px] font-medium text-gray-400 uppercase tracking-wider hidden sm:block">
+                Ayurvedic Pharmacopoeia
+            </div>
+        </div>
     </header>
 
-    <div class="search-container">
-        <input type="text" id="search" class="search-bar" placeholder="Filter by herb, compound, mechanism, or text..." onkeyup="filterHerbs()">
-    </div>
+    <main class="max-w-4xl mx-auto px-6 py-16">
+        <section class="text-center mb-16">
+            <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900 mb-4 sm:leading-tight">
+                Ancient Plants. <span class="text-emerald-600">Modern Science.</span>
+            </h1>
+            <p class="text-lg font-normal text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                A reference index of medicinal plants documented in classical Ayurvedic texts, cross-referenced with contemporary phytochemistry and clinical research.
+            </p>
+        </section>
 
-    <main class="grid-container" id="herbGrid">
-        
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Aśvagandhā</div>
-                </div>
-                <span class="botanical-name">Withania somnifera</span>
+        <section class="mb-10">
+            <div class="relative w-full">
+                <input type="text" id="search" onkeyup="filterPlants()" placeholder="Search plants (e.g. Ashwagandha, Turmeric, Neem...)" 
+                       class="w-full bg-white text-gray-900 placeholder-gray-400 font-medium px-6 py-4 rounded-2xl border border-gray-200 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 shadow-sm transition-all text-base">
             </div>
+        </section>
+
+        <section class="mb-12">
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-2">Filter:</span>
+                <button onclick="filterCategory('ALL')" class="filter-btn bg-gray-900 text-white text-xs font-bold px-4 py-2 rounded-full transition-all tracking-wide">ALL</button>
+                <button onclick="filterCategory('ADAPTOGEN')" class="filter-btn bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-full border border-gray-200 transition-all tracking-wide">ADAPTOGEN</button>
+                <button onclick="filterCategory('ANTI-INFLAMMATORY')" class="filter-btn bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-full border border-gray-200 transition-all tracking-wide">ANTI-INFLAMMATORY</button>
+                <button onclick="filterCategory('ANTIMICROBIAL')" class="filter-btn bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-full border border-gray-200 transition-all tracking-wide">ANTIMICROBIAL</button>
+                <button onclick="filterCategory('NERVINE')" class="filter-btn bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-full border border-gray-200 transition-all tracking-wide">NERVINE</button>
+                <button onclick="filterCategory('DIGESTIVE')" class="filter-btn bg-white hover:bg-gray-100 text-gray-800 text-xs font-bold px-4 py-2 rounded-full border border-gray-200 transition-all tracking-wide">DIGESTIVE</button>
+            </div>
+            <div id="resultsCount" class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-4">10 plants found</div>
+        </section>
+
+        <section id="plantsContainer" class="space-y-4">
             
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Withanolides (Withaferin A, Withanolide D), Somniferine</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Modulates HPA axis expression, reduces systemic serum cortisol levels, and acts as a competitive GABA-A receptor agonist to mitigate neurological stress induction.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Caraka Saṃhitā, Cikitsāsthāna</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Haridrā</div>
+            <div class="card bg-white border border-gray-200 rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:border-gray-300 cursor-pointer group" data-categories="ADAPTOGEN" onclick="toggleCard(this)">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                            <h2 class="text-2xl font-bold text-gray-900 search-target">Ashwagandha</h2>
+                            <span class="text-base font-semibold text-emerald-600 italic search-target">Withania somnifera</span>
+                            <span class="text-sm font-bold text-gray-400 search-target">अश्वगन्धा</span>
+                        </div>
+                        <p class="text-xs font-bold text-gray-400 tracking-wide mt-1 uppercase search-target">Solanaceae</p>
+                    </div>
+                    <svg class="chevron w-5 h-5 text-gray-400 group-hover:text-gray-600 shrink-0 ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
-                <span class="botanical-name">Curcuma longa</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Curcuminoids (Curcumin, Demethoxycurcumin, Bisdemethoxycurcumin)</div>
-            </div>
 
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Downregulates NF-κB transcriptive signaling, suppressing synthesis of inflammatory cytokines (TNF-α, IL-1β) and inhibiting COX-2 enzyme profiles.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Suśruta Saṃhitā, Sūtrasthāna</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Tulasī</div>
-                </div>
-                <span class="botanical-name">Ocimum sanctum</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Eugenol, Ursolic Acid, Rosmarinic Acid, Carvacrol</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Enhances immunomodulatory parameters by maximizing Natural Killer (NK) cell activity and scavenging intracellular Reactive Oxygen Species (ROS).</div>
-            </div>
-
-            <div class="ref-footer">Ref: Dhanvantari Nighaṇṭu</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Brāhmī</div>
-                </div>
-                <span class="botanical-name">Bacopa monnieri</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Bacosides (A & B), Hersaponin, Monnierin</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Upregulates protein kinase transcription in the hippocampus, facilitating synaptic repair and reinforcing endogenous antioxidant enzymes like Superoxide Dismutase (SOD).</div>
-            </div>
-
-            <div class="ref-footer">Ref: Caraka Saṃhitā, Sūtrasthāna</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Nimba</div>
-                </div>
-                <span class="botanical-name">Azadirachta indica</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Azadirachtin, Nimbin, Nimbidin, Gedunin</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Disrupts bacterial peptidoglycan wall architectures, prevents biofilm clustering, and exerts antipyretic activity by mitigating central prostaglandin synthesis.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Suśruta Saṃhitā, Sūtrasthāna</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Guḍūcī</div>
-                </div>
-                <span class="botanical-name">Tinospora cordifolia</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Tinosporaside, Cordifolioside A, Berberine</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Induces differentiation within macrophage populations, amplifies cellular IgG antibody populations, and restricts lipid peroxidation across hepatocyte membranes.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Bhāvaprakāśa Nighaṇṭu</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Śatāvarī</div>
-                </div>
-                <span class="botanical-name">Asparagus racemosus</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Shatavarins (I-IV), Sarsasapogenin</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Enhances total white blood cell output, stimulates phagocytic capacity in peritoneal macrophages, and exhibits systematic mucosal lining protection.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Aṣṭāṅga Hṛdayam, Cikitsāsthāna</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Āmalakī</div>
-                </div>
-                <span class="botanical-name">Phyllanthus emblica</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Emblicanin A & B, Ascorbic Acid</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Acts as a robust antioxidant pathway donor, neutralizing mitochondrial free radical accumulations and downregulating age-related DNA damage.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Caraka Saṃhitā, Cikitsāsthāna</div>
-        </div>
-
-        <div class="pharma-card" onclick="celebrate(this)">
-            <div class="header-block">
-                <div class="main-title-row">
-                    <div class="sanskrit-title">Śaṅkhapuṣpī</div>
-                </div>
-                <span class="botanical-name">Convolvulus pluricaulis</span>
-            </div>
-            
-            <div class="data-block">
-                <div class="data-header">Key Phytochemicals</div>
-                <div class="data-content keyword-target">Convolvine, Phyllabine, Pluricaulin</div>
-            </div>
-
-            <div class="data-block">
-                <div class="data-header">Pharmacological Mechanism</div>
-                <div class="data-content keyword-target">Reduces expression profiles of acetylcholinesterase (AChE) enzymes, increasing acetylcholine accessibility to lower amygdala anxiety scores.</div>
-            </div>
-
-            <div class="ref-footer">Ref: Caraka Saṃhitā, Sūtrasthāna</div>
-        </div>
-
-    </main>
-
-    <script>
-        function filterHerbs() {
-            const query = document.getElementById('search').value.toLowerCase();
-            const cards = document.getElementsByClassName('pharma-card');
-
-            for (let i = 0; i < cards.length; i++) {
-                const title = cards[i].querySelector('.sanskrit-title').innerText.toLowerCase();
-                const botanical = cards[i].querySelector('.botanical-name').innerText.toLowerCase();
-                
-                let combinedText = title + " " + botanical;
-                const targetElements = cards[i].querySelectorAll('.keyword-target');
-                targetElements.forEach(el => {
-                    combinedText += " " + el.innerText.toLowerCase();
-                });
-
-                if (combinedText.includes(query)) {
-                    cards[i].style.display = "block";
-                } else {
-                    cards[i].style.display = "none";
-                }
-            }
-        }
-
-        function celebrate(card) {
-            confetti({
-                particleCount: 50,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#2a6fdf', '#19947f', '#f0f4f8']
-            });
-        }
-    </script>
-</body>
-</html>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="border-t border-gray-100 mt-6 pt-6 space-y-6">
+                            <div>
+                                <h3 class="text-xs font-extrabold text-gray-400 uppercase tracking-wider mb-2">Classical Use</h3>
+                                <p class="text-sm font-medium text-gray-700 leading-relaxed search-target">Rasayana (rejuvenative tonic); prescribed in Charaka Samhita for debility, emaciation, and impaired immunity.</p>
+                            </div>
+                            <div>
+                                <h3 class="text-xs font-extrabold text-gray-400 uppercase tracking-wider mb-2">Active Compounds</h3>
+                                <div class="flex flex-wrap gap-1.5 mb-2">
+                                    <span class="bg-gray-100 text-gray-800 text-[11px] font-bold px-2.5 py-1 rounded-md tracking-wide search-target">WITHANOLIDES</span>
+                                    <span class="bg-gray-100 text-gray-800 text-[11px] font-bold px-2.5 py-1 rounded-md tracking-wide search-target">WITHAFERIN A</span>
+                                    <span class="bg-gray-100 text-gray-800 text-[11px]
