@@ -1,0 +1,66 @@
+[
+  {
+    "name": "Ashwagandha",
+    "botanical": "Withania somnifera",
+    "sanskrit": "अश्वगन्धा",
+    "family": "Solanaceae",
+    "category": "ADAPTOGEN",
+    "use": "Rasayana (rejuvenative tonic); prescribed for debility, emaciation, and chronic stress management.",
+    "compounds": ["WITHANOLIDES", "WITHAFERIN A", "SITOINDOSIDES"],
+    "parts": "Root, leaf",
+    "mechanisms": [
+      {"title": "HPA Axis Modulation", "desc": "Reduces cortisol secretion by modulating the hypothalamic–pituitary–adrenal axis."},
+      {"title": "GABAergic Activity", "desc": "Promotes sleep onset and anxiety mitigation via GABA receptor potentiation."}
+    ],
+    "application": "Decoction: 3-6g of root powder boiled in milk, taken twice daily.",
+    "source": "Caraka Saṃhitā, Cikitsāsthāna"
+  },
+  {
+    "name": "Turmeric",
+    "botanical": "Curcuma longa",
+    "sanskrit": "हरिद्रा",
+    "family": "Zingiberaceae",
+    "category": "ANTI-INFLAMMATORY",
+    "use": "Widely used for wound healing, systemic skin disorders, and purifying hepatobiliary pathways.",
+    "compounds": ["CURCUMIN", "DEMETHOXYCURCUMIN", "TURMERONE"],
+    "parts": "Rhizome",
+    "mechanisms": [
+      {"title": "Pleiotropic Anti-Inflammation", "desc": "Simultaneously downregulates COX-2, LOX, iNOS, and NF-κB transcriptive pathways."},
+      {"title": "Antioxidant Cascade", "desc": "Activates Nrf2 transcription factors, upregulating endogenous antioxidant profiles."}
+    ],
+    "application": "Infusion: 1-2g of expressed rhizome juice or powder mixed with warm water or clarified butter.",
+    "source": "Suśruta Saṃhitā, Sūtrasthāna"
+  },
+  {
+    "name": "Brahmi",
+    "botanical": "Bacopa monnieri",
+    "sanskrit": "ब्राह्मी",
+    "family": "Plantaginaceae",
+    "category": "NERVINE",
+    "use": "Classified as a premium Medhya Rasayana to enhance cognitive memory, focus, and neurological processing.",
+    "compounds": ["BACOSIDES A & B", "BACOPASAPONINS"],
+    "parts": "Whole herb",
+    "mechanisms": [
+      {"title": "Synaptic Remodelling", "desc": "Bacosides enhance synaptic plasticity by promoting dendritic arborisation within the hippocampus."},
+      {"title": "AChE Inhibition", "desc": "Inhibits acetylcholinesterase enzyme profiles, raising active acetylcholine availability."}
+    ],
+    "application": "Juice: 10-20ml of fresh expressed whole plant extract, consumed in the morning.",
+    "source": "Aṣṭāṅga Hṛdayam"
+  },
+  {
+    "name": "Neem",
+    "botanical": "Azadirachta indica",
+    "sanskrit": "निम्ब",
+    "family": "Meliaceae",
+    "category": "ANTIMICROBIAL",
+    "use": "Core systemic approach for infectious skin disorders, metabolic heat conditions, and pathogen removal.",
+    "compounds": ["NIMBIDIN", "AZADIRACHTIN", "NIMBOLIDE"],
+    "parts": "Leaf, bark, seed oil",
+    "mechanisms": [
+      {"title": "Antimicrobial Action", "desc": "Disrupts bacterial peptidoglycan wall architectures and halts biofilm clustering safely."},
+      {"title": "Immunomodulation", "desc": "Nimbolide structures directly activate tissue macrophage populations for clearance."}
+    ],
+    "application": "Paste: Fresh leaves ground with water applied topically; Paste or Decoction (5-10g) internally.",
+    "source": "Caraka Saṃhitā, Sūtrasthāna"
+  }
+]
